@@ -6,17 +6,18 @@ import (
 )
 
 type URL struct {
-	ID         uint   `gorm:"primary_key;AUTO_INCREMENT"`
-	Address    string `gorm:"type:varchar(250);unique_index;not null"`
-	Threshold  uint
-	ErrorCount uint
-	CreatedAt  time.Time
-	Alert      *Message
-	UserID     uint `gorm:"foreignkey:UserID"`
+	ID          uint   `gorm:"primary_key;AUTO_INCREMENT"`
+	Address     string `gorm:"type:varchar(250);unique_index;not null"`
+	Threshold   uint
+	SuccessCall uint
+	FailedCall  uint
+	CreatedAt   time.Time
+	Alert       *Message
+	UserID      uint `gorm:"foreignkey:UserID"`
 }
 
 func NewURL(address string, threshold uint) *URL {
-	return &URL{Address: address, ErrorCount: 0, CreatedAt: time.Now(), Threshold: threshold}
+	return &URL{Address: address, SuccessCall: 0, FailedCall: 0, CreatedAt: time.Now(), Threshold: threshold}
 }
 
 type Message struct {
