@@ -23,7 +23,7 @@ func (us *UserStore) Update(u *model.User) error {
 
 func (us *UserStore) GetURLs(u *model.User) ([]model.URL, error) {
 	var urls []model.URL
-	err := us.db.Preload("URls").Where(u).Find(&urls).Error
+	err := us.db.Preload("URls").Preload("Alert").Where(u).Find(&urls).Error
 	return urls, err
 }
 

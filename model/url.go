@@ -25,3 +25,7 @@ type Message struct {
 	Message     string
 	ReferenceID uint `gorm:"foreignkey:ID"`
 }
+
+func NewAlert(message string, referenceID uint) *Message {
+	return &Message{Message: message, ReferenceID: referenceID}
+}
