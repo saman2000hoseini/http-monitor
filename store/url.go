@@ -9,8 +9,8 @@ type URLStore struct {
 	db *gorm.DB
 }
 
-func NewURLStore(db *gorm.DB) *URLStore {
-	return &URLStore{db}
+func NewURLStore(db *gorm.DB) URLStore {
+	return URLStore{db}
 }
 
 func (us *URLStore) SuccessCall(u *model.URL) error {

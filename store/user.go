@@ -9,8 +9,8 @@ type UserStore struct {
 	db *gorm.DB
 }
 
-func NewUserStore(db *gorm.DB) *UserStore {
-	return &UserStore{db}
+func NewUserStore(db *gorm.DB) UserStore {
+	return UserStore{db}
 }
 
 func (us *UserStore) Create(u *model.User) error {

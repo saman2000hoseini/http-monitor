@@ -2,19 +2,17 @@ package utils
 
 import (
 	"github.com/jinzhu/gorm"
+	handler2 "github.com/saman2000hoseini/http-monitor/handler"
 	"github.com/saman2000hoseini/http-monitor/model"
-	"github.com/saman2000hoseini/http-monitor/store"
 	"net/http"
 	"strings"
 	"time"
 )
 
-var userS *store.UserStore
-var urlS *store.URLStore
+var handler *handler2.Handler
 
 func StartMonitoring(d time.Duration, db *gorm.DB) {
-	userS = store.NewUserStore(db)
-	urlS = store.NewURLStore(db)
+	handler = handler2.NewHandler(db)
 	ticker := time.NewTicker(d)
 	for {
 		var users []model.User
@@ -28,15 +26,15 @@ func StartMonitoring(d time.Duration, db *gorm.DB) {
 }
 
 func MonitorURLs(u *model.User) {
-	urls, err := userS.GetURLs(u)
+	urls, err := handler.UserStore.GetURLs(u)
 	if err != nil {
 		return
 	}
 	for _, url := range urls {
 		if HTTPCall(url.Address)/100 == 2 {
-			urlS.SuccessCall(&url)
+			handler.UrlStore.SuccessCall(&url)
 		} else {
-			urlS.FailedCall(&url)
+			handler.UrlStore.FailedCall(&url)
 		}
 	}
 }
