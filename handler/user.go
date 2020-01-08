@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"fmt"
 	"github.com/labstack/echo"
 	"github.com/saman2000hoseini/http-monitor/model"
 	"net/http"

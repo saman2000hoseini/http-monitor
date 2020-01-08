@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/labstack/echo"
 	"github.com/saman2000hoseini/http-monitor/model"
 )
