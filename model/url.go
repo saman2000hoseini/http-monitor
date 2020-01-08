@@ -20,10 +20,10 @@ func NewURL(address string, threshold uint) *URL {
 
 type Message struct {
 	gorm.Model
-	Message     string
-	ReferenceID uint `gorm:"foreignkey:ID"`
+	Message string
+	RefID   uint `gorm:"index:url_id"`
 }
 
 func NewAlert(message string, referenceID uint) *Message {
-	return &Message{Message: message, ReferenceID: referenceID}
+	return &Message{Message: message, RefID: referenceID}
 }
