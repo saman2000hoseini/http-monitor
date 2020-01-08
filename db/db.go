@@ -2,12 +2,14 @@ package db
 
 import (
 	"errors"
+
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/saman2000hoseini/http-monitor/model"
 )
 
 func NewDB() (*gorm.DB, error) {
-	db, err := gorm.Open("sqlite3", "./")
+	db, err := gorm.Open("sqlite3", "./myDB.db")
 	if err != nil {
 		return nil, err
 	}
@@ -19,6 +21,7 @@ func Migrate(db *gorm.DB) error {
 	return err
 }
 
+//make database and create tables
 func FirstSetup() (*gorm.DB, error) {
 	db, err := NewDB()
 	if err != nil {

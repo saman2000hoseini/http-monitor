@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-const alert = "Critical threshold violated!"
-
 type URL struct {
 	ID         uint   `gorm:"primary_key;AUTO_INCREMENT"`
 	Address    string `gorm:"type:varchar(250);unique_index;not null"`
@@ -14,7 +12,7 @@ type URL struct {
 	ErrorCount uint
 	CreatedAt  time.Time
 	Alert      *Message
-	UserID     uint
+	UserID     uint `gorm:"foreignkey:UserID"`
 }
 
 func NewURL(address string, threshold uint) *URL {
@@ -23,5 +21,6 @@ func NewURL(address string, threshold uint) *URL {
 
 type Message struct {
 	gorm.Model
-	Message string
+	Message     string
+	ReferenceID uint `gorm:"foreignkey:ID"`
 }
