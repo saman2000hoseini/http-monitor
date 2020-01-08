@@ -1,6 +1,7 @@
 package model
 
 import (
+	"github.com/jinzhu/gorm"
 	"time"
 )
 
@@ -12,9 +13,15 @@ type URL struct {
 	Threshold  uint
 	ErrorCount uint
 	CreatedAt  time.Time
+	Alert      *Message
 	UserID     uint
 }
 
 func NewURL(address string, threshold uint) *URL {
 	return &URL{Address: address, ErrorCount: 0, CreatedAt: time.Now(), Threshold: threshold}
+}
+
+type Message struct {
+	gorm.Model
+	Message string
 }
