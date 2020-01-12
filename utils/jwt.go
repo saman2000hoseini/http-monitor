@@ -7,11 +7,14 @@ import (
 
 var JWTSecret = []byte("SECRET_TOKEN")
 
-func GenerateJWT(id uint) string {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["id"] = id
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	t, _ := token.SignedString(JWTSecret)
-	return t
+type JWTCustomClaims struct {
+	ID uint `json:"id"`
+	jwt.StandardClaims
+}
+
+func GenerateJWT(id uint) (string, error) {
+	claims := &JWTCustomClaims{id, jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 48).Unix()}}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	t, err := token.SignedString(JWTSecret)
+	return t, err
 }
