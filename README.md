@@ -7,7 +7,9 @@ RESTfull API to monitor HTTP endpoints
 |   `-- db.go
 |-- handler
 |   |-- handler.go
-|   `-- request.go
+|   |-- request.go
+|   |-- routes.go
+|   `-- user.go
 |-- model
 |   |-- url.go
 |   `-- user.go
@@ -23,7 +25,8 @@ RESTfull API to monitor HTTP endpoints
 |   `-- jwt.go
 |-- go.mod
 |-- go.sum
-`-- main.go
+|-- main.go
+`-- README.md
 ```
 
 # Models
