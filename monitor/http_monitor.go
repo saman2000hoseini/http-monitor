@@ -1,4 +1,4 @@
-package utils
+package monitor
 
 import (
 	"github.com/jinzhu/gorm"
@@ -6,26 +6,31 @@ import (
 	"github.com/saman2000hoseini/http-monitor/model"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 )
 
 var handler *handler2.Handler
 
 func StartMonitoring(d time.Duration, db *gorm.DB) {
+	var wg sync.WaitGroup
 	handler = handler2.NewHandler(db)
 	ticker := time.NewTicker(d)
 	for {
 		var users []model.User
 		db.Find(&users)
 		for _, user := range users {
-			go MonitorURLs(&user)
+			wg.Add(1)
+			go MonitorURLs(&user, &wg)
 		}
+		wg.Wait()
 		<-ticker.C
 	}
 
 }
 
-func MonitorURLs(u *model.User) {
+func MonitorURLs(u *model.User, wg *sync.WaitGroup) {
+	defer wg.Done()
 	urls, err := handler.UserStore.GetURLs(u)
 	if err != nil {
 		return
