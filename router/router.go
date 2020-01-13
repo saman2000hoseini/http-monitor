@@ -2,11 +2,14 @@ package router
 
 import (
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"gopkg.in/go-playground/validator.v9"
 )
 
 func Router() *echo.Echo {
 	e := echo.New()
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 	e.Validator = newValidator()
 	return e
 }

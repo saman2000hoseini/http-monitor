@@ -10,7 +10,7 @@ type User struct {
 	gorm.Model
 	Username string `gorm:"unique_index;not null"`
 	Password string `gorm:"not null"`
-	URLs     []URL
+	URLs     []URL  `gorm:"null"`
 }
 
 func (u *User) HashPassword(pass string) error {
