@@ -6,6 +6,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const URLLIMIT = 20
+
 type User struct {
 	gorm.Model
 	Username string `gorm:"unique_index;not null"`

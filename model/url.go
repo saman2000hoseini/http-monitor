@@ -14,8 +14,8 @@ type URL struct {
 	UserID      uint
 }
 
-func NewURL(address string, threshold uint) *URL {
-	return &URL{Address: address, SuccessCall: 0, FailedCall: 0, Threshold: threshold}
+func NewURL(address string, threshold uint, userID uint) *URL {
+	return &URL{Address: address, SuccessCall: 0, FailedCall: 0, Threshold: threshold, UserID: userID}
 }
 
 type Message struct {

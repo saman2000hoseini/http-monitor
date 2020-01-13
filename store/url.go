@@ -31,3 +31,18 @@ func (us *URLStore) PublishAlert(u *model.URL) (string, error) {
 	u.Alert = nil
 	return m, us.db.Model(u).Update(u).Error
 }
+
+func (us *URLStore) GetByID(id uint) (*model.URL, error) {
+	var url model.URL
+	err := us.db.Where(&model.URL{Model: gorm.Model{ID: id}}).Preload("Alert").First(&url).Error
+	return &url, err
+}
+
+func (us *URLStore) Create(u *model.URL) error {
+	return us.db.Create(u).Error
+}
+
+func (us *URLStore) Update(u *model.URL) error {
+	return us.db.Save(u).Error
+	//return us.db.Model(u).Update(u).Error
+}

@@ -31,15 +31,16 @@ func StartMonitoring(d time.Duration, db *gorm.DB) {
 
 func MonitorURLs(u *model.User, wg *sync.WaitGroup) {
 	defer wg.Done()
-	urls, err := handler.UserStore.GetURLs(u)
+	user, err := handler.UserStore.GetByID(u.ID)
 	if err != nil {
 		return
 	}
-	for _, url := range urls {
+	for index, _ := range user.URLs {
+		url, _ := handler.URLStore.GetByID(user.URLs[index].ID)
 		if HTTPCall(url.Address)/100 == 2 {
-			handler.UrlStore.SuccessCall(&url)
+			handler.URLStore.SuccessCall(url)
 		} else {
-			handler.UrlStore.FailedCall(&url)
+			handler.URLStore.FailedCall(url)
 		}
 	}
 }

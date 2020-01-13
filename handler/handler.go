@@ -7,7 +7,7 @@ import (
 
 type Handler struct {
 	UserStore store.UserStore
-	UrlStore  store.URLStore
+	URLStore  store.URLStore
 }
 
 func NewHandler(db *gorm.DB) *Handler {

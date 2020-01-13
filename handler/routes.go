@@ -13,8 +13,8 @@ func (h *Handler) Setup(eg *echo.Group) {
 	user.POST("/register", h.Register)
 	user.POST("/login", h.Login)
 	user.PUT("/update", h.Update)
-	//url := user.Group("/url",middleware.JWTWithConfig(config))
-	//	url.GET("")
-	//	url.POST("")
+	url := user.Group("/url", middleware.JWTWithConfig(config))
+	url.GET("", h.UpdateURL)
+	url.POST("", h.AddURL)
 	//	url.PUT("/user")
 }
