@@ -10,8 +10,8 @@ type URL struct {
 	Threshold   uint
 	SuccessCall uint
 	FailedCall  uint
-	Alert       *Message
-	UserID      uint `gorm:"foreignkey:UserID"`
+	Alert       *Message `gorm:"null"`
+	UserID      uint
 }
 
 func NewURL(address string, threshold uint) *URL {

@@ -1,4 +1,4 @@
-package utils
+package monitor
 
 import (
 	"github.com/jinzhu/gorm"

@@ -13,7 +13,7 @@ type JWTCustomClaims struct {
 }
 
 func GenerateJWT(id uint) (string, error) {
-	claims := &JWTCustomClaims{id, jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 48).Unix()}}
+	claims := &JWTCustomClaims{id, jwt.StandardClaims{ExpiresAt: time.Now().Add(time.Hour * 72).Unix()}}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	t, err := token.SignedString(JWTSecret)
 	return t, err

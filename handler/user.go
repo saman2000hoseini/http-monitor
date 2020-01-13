@@ -3,8 +3,10 @@ package handler
 import (
 	"errors"
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/saman2000hoseini/http-monitor/model"
+	"github.com/saman2000hoseini/http-monitor/utils"
 	"net/http"
 )
 
@@ -19,8 +21,12 @@ func (h *Handler) Register(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	err = c.String(201, "User Created")
-	return err
+	var t string
+	t, err = utils.GenerateJWT(user.ID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusCreated, echo.Map{"token": t})
 }
 
 func (h *Handler) Login(c echo.Context) error {
@@ -40,5 +46,27 @@ func (h *Handler) Login(c echo.Context) error {
 	if !user.CheckPassword(r.User.Password) {
 		return c.JSON(http.StatusForbidden, errors.New("AccessForbidden"))
 	}
-	return c.JSON(http.StatusOK, "login successful")
+	var t string
+	t, err = utils.GenerateJWT(user.ID)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	return c.JSON(http.StatusOK, echo.Map{"token": t})
+}
+
+func (h *Handler) Update(c echo.Context) error {
+	u := c.Get("user").(*jwt.Token)
+	claims := u.Claims.(*utils.JWTCustomClaims)
+	id := claims.ID
+	user := &model.User{}
+	user, _ = h.UserStore.GetByID(id)
+	user.Username = c.FormValue("username")
+	user.HashPassword(c.FormValue("password"))
+	fmt.Println(user.Username)
+	fmt.Println(user.Password)
+	err := h.UserStore.Update(user)
+	if err != nil {
+		return c.String(http.StatusConflict, err.Error())
+	}
+	return c.String(http.StatusOK, "Successfully updated")
 }

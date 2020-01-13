@@ -3,6 +3,7 @@ package middleware
 import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	"github.com/saman2000hoseini/http-monitor/utils"
 	"strings"
 )
 
@@ -14,5 +15,5 @@ func Skipper(c echo.Context) bool {
 }
 
 func JWT(key interface{}) middleware.JWTConfig {
-	return middleware.JWTConfig{Skipper: Skipper, SigningKey: key}
+	return middleware.JWTConfig{Skipper: Skipper, SigningKey: key, Claims: &utils.JWTCustomClaims{}}
 }
