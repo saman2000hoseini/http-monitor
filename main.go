@@ -17,6 +17,7 @@ func main() {
 	v1 := r.Group("api")
 	handler := handler2.NewHandler(db)
 	handler.Setup(v1)
-	go monitor.StartMonitoring(15*time.Minute, db)
-	r.Logger.Fatal(r.Start("localhost:54321"))
+	//	go monitor.StartMonitoring(15*time.Minute, db)
+	go monitor.StartMonitoring(5*time.Second, db)
+	r.Logger.Fatal(r.Start("localhost:8080"))
 }

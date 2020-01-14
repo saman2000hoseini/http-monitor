@@ -1,6 +1,7 @@
 package monitor
 
 import (
+	"fmt"
 	"github.com/jinzhu/gorm"
 	handler2 "github.com/saman2000hoseini/http-monitor/handler"
 	"github.com/saman2000hoseini/http-monitor/model"
@@ -35,12 +36,15 @@ func MonitorURLs(u *model.User, wg *sync.WaitGroup) {
 	if err != nil {
 		return
 	}
-	for index, _ := range user.URLs {
-		url, _ := handler.URLStore.GetByID(user.URLs[index].ID)
+	user.URLs, _ = handler.URLStore.GetByUser(user.ID)
+	for _, url := range user.URLs {
 		if HTTPCall(url.Address)/100 == 2 {
-			handler.URLStore.SuccessCall(url)
+			handler.URLStore.SuccessCall(&url)
 		} else {
-			handler.URLStore.FailedCall(url)
+			err := handler.URLStore.FailedCall(&url)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 	}
 }
@@ -50,6 +54,7 @@ func HTTPCall(a string) int {
 	resp, err := http.Get(url)
 	if err != nil {
 		//TODO
+		return 500
 	}
 	return resp.StatusCode
 }

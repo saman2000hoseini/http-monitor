@@ -21,7 +21,7 @@ func NewURL(address string, threshold uint, userID uint) *URL {
 type Message struct {
 	gorm.Model
 	Message string
-	RefID   uint `gorm:"index:url_id"`
+	RefID   uint `gorm:"not null"`
 }
 
 func NewAlert(message string, referenceID uint) *Message {

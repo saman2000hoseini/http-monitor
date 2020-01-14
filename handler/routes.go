@@ -14,7 +14,7 @@ func (h *Handler) Setup(eg *echo.Group) {
 	user.POST("/login", h.Login)
 	user.PUT("/update", h.Update)
 	url := user.Group("/url", middleware.JWTWithConfig(config))
-	url.GET("", h.UpdateURL)
+	url.PUT("", h.UpdateURL)
 	url.POST("", h.AddURL)
 	//	url.PUT("/user")
 }
