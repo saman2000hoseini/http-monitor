@@ -30,14 +30,15 @@ func (us *URLStore) FailedCall(u *model.URL) error {
 	}
 	if u.FailedCall >= u.Threshold && u.Alert == nil {
 		u.Alert = model.NewAlert("Critical threshold violated", u.ID)
+		us.db.Save(u.Alert)
 	}
 	return us.db.Save(u).Error
 }
 
-func (us *URLStore) PublishAlert(u *model.URL) (string, error) {
-	m := u.Alert.Message
-	u.Alert = nil
-	return m, us.db.Save(u).Error
+func (us *URLStore) PublishAlert(u *model.URL) error {
+	u.FailedCall = 0
+	us.db.Save(u)
+	return us.db.Delete(u.Alert).Error
 }
 
 func (us *URLStore) GetByID(id uint) (*model.URL, error) {

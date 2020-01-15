@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
@@ -55,4 +56,40 @@ func (h *Handler) UpdateURL(c echo.Context) error {
 		return c.String(http.StatusConflict, err.Error())
 	}
 	return c.String(http.StatusOK, "Successfully updated")
+}
+
+func (h *Handler) GetURLs(c echo.Context) error {
+	u := c.Get("user").(*jwt.Token)
+	claims := u.Claims.(*utils.JWTCustomClaims)
+	id := claims.ID
+	user := &model.User{}
+	user, _ = h.UserStore.GetByID(id)
+	jsonUser, err := json.Marshal(user)
+	if err != nil {
+		return c.String(http.StatusConflict, err.Error())
+	}
+	return c.String(http.StatusOK, string(jsonUser))
+}
+
+func (h *Handler) GetURL(c echo.Context) error {
+	u := c.Get("user").(*jwt.Token)
+	claims := u.Claims.(*utils.JWTCustomClaims)
+	id := claims.ID
+	uid, _ := strconv.ParseUint(c.FormValue("id"), 10, 32)
+	url, err := h.URLStore.GetByID(uint(uid))
+	if id != url.UserID {
+		return c.String(http.StatusUnauthorized, "Access to selected url is denied")
+	}
+	if err != nil {
+		return c.String(http.StatusConflict, err.Error())
+	}
+	jsonURL, err := json.Marshal(url)
+	strJson := string(jsonURL)
+	url.Alert, _ = h.URLStore.GetAlert(url.ID)
+	if url.Alert != nil {
+		jsonAlert, _ := json.Marshal(url.Alert)
+		strJson += string(jsonAlert)
+		h.URLStore.PublishAlert(url)
+	}
+	return c.String(http.StatusOK, strJson)
 }
