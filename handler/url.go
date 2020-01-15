@@ -6,14 +6,14 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/saman2000hoseini/http-monitor/model"
-	"github.com/saman2000hoseini/http-monitor/utils"
+	"github.com/saman2000hoseini/http-monitor/router/middleware"
 	"net/http"
 	"strconv"
 )
 
 func (h *Handler) AddURL(c echo.Context) error {
 	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*utils.JWTCustomClaims)
+	claims := u.Claims.(*middleware.JWTCustomClaims)
 	id := claims.ID
 	user := &model.User{}
 	user, _ = h.UserStore.GetByID(id)
@@ -34,7 +34,7 @@ func (h *Handler) AddURL(c echo.Context) error {
 
 func (h *Handler) UpdateURL(c echo.Context) error {
 	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*utils.JWTCustomClaims)
+	claims := u.Claims.(*middleware.JWTCustomClaims)
 	id := claims.ID
 	url := &model.URL{}
 	uid, _ := strconv.ParseUint(c.FormValue("id"), 10, 32)
@@ -60,7 +60,7 @@ func (h *Handler) UpdateURL(c echo.Context) error {
 
 func (h *Handler) GetURLs(c echo.Context) error {
 	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*utils.JWTCustomClaims)
+	claims := u.Claims.(*middleware.JWTCustomClaims)
 	id := claims.ID
 	user := &model.User{}
 	user, _ = h.UserStore.GetByID(id)
@@ -73,7 +73,7 @@ func (h *Handler) GetURLs(c echo.Context) error {
 
 func (h *Handler) GetURL(c echo.Context) error {
 	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*utils.JWTCustomClaims)
+	claims := u.Claims.(*middleware.JWTCustomClaims)
 	id := claims.ID
 	uid, _ := strconv.ParseUint(c.FormValue("id"), 10, 32)
 	url, err := h.URLStore.GetByID(uint(uid))

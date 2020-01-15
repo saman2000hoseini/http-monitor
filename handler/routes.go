@@ -4,11 +4,10 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	middleware2 "github.com/saman2000hoseini/http-monitor/router/middleware"
-	"github.com/saman2000hoseini/http-monitor/utils"
 )
 
 func (h *Handler) Setup(eg *echo.Group) {
-	config := middleware2.JWT(utils.JWTSecret)
+	config := middleware2.JWT(middleware2.JWTSecret)
 	user := eg.Group("/user", middleware.JWTWithConfig(config))
 	user.POST("/register", h.Register)
 	user.POST("/login", h.Login)

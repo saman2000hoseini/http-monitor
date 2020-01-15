@@ -16,12 +16,13 @@ func NewDB() (*gorm.DB, error) {
 	return db, nil
 }
 
+//create tables from models
 func Migrate(db *gorm.DB) error {
 	err := db.AutoMigrate(&model.User{}, &model.URL{}, &model.Message{}).Error
 	return err
 }
 
-//make database and create tables
+//make database and create tables for the first time
 func FirstSetup() (*gorm.DB, error) {
 	db, err := NewDB()
 	if err != nil {

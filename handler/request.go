@@ -42,18 +42,3 @@ func (r *userLoginRequest) bind(c echo.Context) error {
 	}
 	return nil
 }
-
-type createURLRequest struct {
-	Address string `json:"address" validate:"required"`
-}
-
-func (r *createURLRequest) bind(c echo.Context, u *model.URL) error {
-	if err := c.Bind(r); err != nil {
-		return err
-	}
-	if err := c.Validate(r); err != nil {
-		return err
-	}
-	u.Address = r.Address
-	return nil
-}

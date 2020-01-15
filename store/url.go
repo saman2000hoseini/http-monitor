@@ -18,6 +18,7 @@ func (us *URLStore) SuccessCall(u *model.URL) error {
 	return us.db.Save(u).Error
 }
 
+//check if failed calls passed the threshold to throw alert
 func (us *URLStore) FailedCall(u *model.URL) error {
 	u.FailedCall++
 	var err error
@@ -35,6 +36,7 @@ func (us *URLStore) FailedCall(u *model.URL) error {
 	return us.db.Save(u).Error
 }
 
+//thrown alert has been seen so it should reset
 func (us *URLStore) PublishAlert(u *model.URL) error {
 	u.FailedCall = 0
 	us.db.Save(u)

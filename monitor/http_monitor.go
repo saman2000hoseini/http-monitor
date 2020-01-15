@@ -13,6 +13,7 @@ import (
 
 var handler *handler2.Handler
 
+//foreach user dedicate goroutine to monitor added urls
 func StartMonitoring(d time.Duration, db *gorm.DB) {
 	var wg sync.WaitGroup
 	handler = handler2.NewHandler(db)
@@ -27,7 +28,6 @@ func StartMonitoring(d time.Duration, db *gorm.DB) {
 		wg.Wait()
 		<-ticker.C
 	}
-
 }
 
 func MonitorURLs(u *model.User, wg *sync.WaitGroup) {
@@ -59,6 +59,7 @@ func HTTPCall(a string) int {
 	return resp.StatusCode
 }
 
+//extract url address into standard format
 func reFormat(a string) string {
 	strings.Replace(a, "", "www.", 1)
 	if !strings.Contains(a, "http://") {
