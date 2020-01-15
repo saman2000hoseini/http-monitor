@@ -3,30 +3,35 @@ RESTfull API to monitor HTTP endpoints
 
 # Directory Structure
 ```
-|-- db
-|   `-- db.go
-|-- handler
-|   |-- handler.go
-|   |-- request.go
-|   |-- routes.go
-|   `-- user.go
-|-- model
-|   |-- url.go
-|   `-- user.go
-|-- router
-|   |-- middleware
-|   |   `-- jwt.go
-|   `-- router.go
-|-- store
-|   |-- url.go
-|   `-- user.go
-|-- utils
-|   |-- http_monitor.go
-|   `-- jwt.go
-|-- go.mod
-|-- go.sum
-|-- main.go
-`-- README.md
+.
+├── db
+│   └── db.go
+├── Dockerfile
+├── go.mod
+├── go.sum
+├── handler
+│   ├── handler.go
+│   ├── request.go
+│   ├── routes.go
+│   ├── url.go
+│   ├── user.go
+│   └── user_test.go
+├── main.go
+├── model
+│   ├── url.go
+│   └── user.go
+├── monitor
+│   └── http_monitor.go
+├── README.md
+├── router
+│   ├── middleware
+│   │   └── jwt.go
+│   └── router.go
+├── store
+│   ├── url.go
+│   └── user.go
+└── utils
+    └── jwt.go
 ```
 
 # Models

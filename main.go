@@ -19,5 +19,5 @@ func main() {
 	handler.Setup(v1)
 	go monitor.StartMonitoring(15*time.Minute, db)
 	//	go monitor.StartMonitoring(15*time.Second, db)
-	r.Logger.Fatal(r.Start("localhost:8080"))
+	r.Logger.Fatal(r.Start(":8080"))
 }
