@@ -17,4 +17,5 @@ func (h *Handler) Setup(eg *echo.Group) {
 	url.POST("", h.AddURL)
 	url.GET("/all", h.GetURLs)
 	url.GET("", h.GetURL)
+	url.GET("/:id", h.GetURLStatistics)
 }

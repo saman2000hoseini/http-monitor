@@ -77,13 +77,16 @@ func (h *Handler) GetURL(c echo.Context) error {
 	id := claims.ID
 	uid, _ := strconv.ParseUint(c.FormValue("id"), 10, 32)
 	url, err := h.URLStore.GetByID(uint(uid))
-	if id != url.UserID {
-		return c.String(http.StatusUnauthorized, "Access to selected url is denied")
-	}
 	if err != nil {
 		return c.String(http.StatusConflict, err.Error())
 	}
+	if id != url.UserID {
+		return c.String(http.StatusUnauthorized, "Access to selected url is denied")
+	}
 	jsonURL, err := json.Marshal(url)
+	if err != nil {
+		return c.String(http.StatusConflict, err.Error())
+	}
 	strJson := string(jsonURL)
 	url.Alert, _ = h.URLStore.GetAlert(url.ID)
 	if url.Alert != nil {
@@ -91,5 +94,29 @@ func (h *Handler) GetURL(c echo.Context) error {
 		strJson += string(jsonAlert)
 		h.URLStore.PublishAlert(url)
 	}
+	return c.String(http.StatusOK, strJson)
+}
+
+func (h *Handler) GetURLStatistics(c echo.Context) error {
+	u := c.Get("user").(*jwt.Token)
+	claims := u.Claims.(*middleware.JWTCustomClaims)
+	id := claims.ID
+	uid, _ := strconv.ParseUint(c.Param("id"), 10, 32)
+	url, err := h.URLStore.GetByID(uint(uid))
+	if err != nil {
+		return c.String(http.StatusConflict, err.Error())
+	}
+	if id != url.UserID {
+		return c.String(http.StatusUnauthorized, "Access to selected url is denied")
+	}
+	url.FailedCall, err = h.URLStore.GetTotalFailure(url)
+	if err != nil {
+		return c.String(http.StatusConflict, err.Error())
+	}
+	jsonURL, err := json.Marshal(url)
+	if err != nil {
+		return c.String(http.StatusConflict, err.Error())
+	}
+	strJson := string(jsonURL)
 	return c.String(http.StatusOK, strJson)
 }

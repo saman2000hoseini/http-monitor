@@ -3,6 +3,7 @@ package store
 import (
 	"github.com/jinzhu/gorm"
 	"github.com/saman2000hoseini/http-monitor/model"
+	"time"
 )
 
 type URLStore struct {
@@ -30,7 +31,10 @@ func (us *URLStore) FailedCall(u *model.URL) error {
 		u.Alert = nil
 	}
 	if u.FailedCall >= u.Threshold && u.Alert == nil {
-		u.Alert = model.NewAlert("Critical threshold violated", u.ID)
+		u.Alert = model.NewAlert("Critical threshold violated", u.FailedCall, u.ID)
+		us.db.Save(u.Alert)
+	} else if u.Alert != nil {
+		u.Alert.FailedCall = u.FailedCall
 		us.db.Save(u.Alert)
 	}
 	return us.db.Save(u).Error
@@ -57,7 +61,8 @@ func (us *URLStore) GetByUser(id uint) ([]model.URL, error) {
 
 func (us *URLStore) GetAlert(id uint) (*model.Message, error) {
 	alert := &model.Message{}
-	err := us.db.Where(&model.Message{RefID: id}).First(alert).Error
+	err := us.db.Table("messages").Order("created_at desc").Where("ref_id = ?", id).First(alert).Error
+	//	err := us.db.Where(&model.Message{RefID: id}).First(alert).Error
 	return alert, err
 }
 
@@ -68,4 +73,32 @@ func (us *URLStore) Create(u *model.URL) error {
 func (us *URLStore) Update(u *model.URL) error {
 	return us.db.Save(u).Error
 	//return us.db.Model(u).Update(u).Error
+}
+
+func (us *URLStore) GetTotalFailure(u *model.URL) (uint, error) {
+	var alerts []model.Message
+	var sum uint
+	t := time.Date(time.Now().Year(), time.Now().Month(), time.Now().Day(), 0, 0, 0, 0, time.Now().Location())
+	err := us.db.Unscoped().Where("created_at >= ? AND ref_id = ?", t, u.ID).Find(&alerts).Error
+	for _, alert := range alerts {
+		sum += alert.FailedCall
+	}
+	if u.FailedCall < u.Threshold {
+		sum += u.FailedCall
+	}
+	return sum, err
+}
+
+func (us *URLStore) Reset() {
+	var urls []model.URL
+	us.db.Find(&urls)
+	for _, url := range urls {
+		if url.FailedCall >= url.Threshold {
+			url.Alert, _ = us.GetAlert(url.ID)
+			us.PublishAlert(&url)
+		}
+		url.FailedCall = 0
+		url.SuccessCall = 0
+		us.db.Save(url)
+	}
 }

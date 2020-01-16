@@ -2,6 +2,7 @@ package monitor
 
 import (
 	"fmt"
+	"github.com/carlescere/scheduler"
 	"github.com/jinzhu/gorm"
 	handler2 "github.com/saman2000hoseini/http-monitor/handler"
 	"github.com/saman2000hoseini/http-monitor/model"
@@ -12,10 +13,12 @@ import (
 )
 
 var handler *handler2.Handler
+var wg *sync.WaitGroup
 
 //foreach user dedicate goroutine to monitor added urls
 func StartMonitoring(d time.Duration, db *gorm.DB) {
-	var wg sync.WaitGroup
+	wg = new(sync.WaitGroup)
+	scheduler.Every().Day().At("00:00").Run(resetURLs)
 	handler = handler2.NewHandler(db)
 	ticker := time.NewTicker(d)
 	for {
@@ -23,14 +26,14 @@ func StartMonitoring(d time.Duration, db *gorm.DB) {
 		db.Find(&users)
 		for _, user := range users {
 			wg.Add(1)
-			go MonitorURLs(&user, &wg)
+			go MonitorURLs(&user)
 		}
 		wg.Wait()
 		<-ticker.C
 	}
 }
 
-func MonitorURLs(u *model.User, wg *sync.WaitGroup) {
+func MonitorURLs(u *model.User) {
 	defer wg.Done()
 	user, err := handler.UserStore.GetByID(u.ID)
 	if err != nil {
@@ -66,4 +69,10 @@ func reFormat(a string) string {
 		a = "http://" + a
 	}
 	return a
+}
+
+func resetURLs() {
+	wg.Add(1)
+	defer wg.Done()
+	handler.URLStore.Reset()
 }
