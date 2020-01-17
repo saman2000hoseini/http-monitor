@@ -146,8 +146,8 @@ $ curl -X GET http://127.0.0.1:8080/api/user/url/<urlID> -H 'Authorization: Bear
 
 ### TODO
 
--[ ] Improve request validation
--[ ] Improve test coverage
--[ ] More efficient error handling
--[ ] Improve worker pool
--[ ] Solve database concurrency issues 
+- [ ] Improve request validation
+- [ ] Improve test coverage
+- [ ] More efficient error handling
+- [ ] Improve worker pool
+- [ ] Solve database concurrency issues 
