@@ -1,7 +1,9 @@
 # HTTP monitor
 RESTful API to monitor HTTP endpoints with Go
-using gorm (An ORM for Go)
-and echo (Go web framework)
+
+using [gorm](https://gorm.io/) (An ORM for Go)
+
+and [echo](https://echo.labstack.com/) (Go web framework)
 
 # Directory Structure
 ```
@@ -84,7 +86,7 @@ $ docker run -d -p 8080:8080 mydocker
 
 #### Example: (password should be at least 8 characters)
 ```
-$ curl -X POST http://localhost:8080/api/user/register -H 'Content-Type: application/json' -d '{"user":{"username":"user","password":"pass"}}'
+$ curl -X POST http://localhost:8080/api/user/register -H 'Content-Type: application/json' -d '{"user":{"username":"<user>","password":"<pass>"}}'
 ```
 
 #### /user/login
@@ -92,7 +94,7 @@ $ curl -X POST http://localhost:8080/api/user/register -H 'Content-Type: applica
 
 #### Example:
 ```
-$ curl -X POST http://localhost:8080/api/user/login -H 'Content-Type: application/json' -d '{"user":{"username":"user","password":"pass"}}'
+$ curl -X POST http://localhost:8080/api/user/login -H 'Content-Type: application/json' -d '{"user":{"username":"<user>","password":"<pass>"}}'
 ```
 
 #### /user/update
@@ -100,7 +102,7 @@ $ curl -X POST http://localhost:8080/api/user/login -H 'Content-Type: applicatio
 
 #### Example:
 ```
-$ curl -X PUT 'http://127.0.0.1:8080/api/user/update?username=newuser&password=newpass' -H 'Authorization: Bearer <token>'
+$ curl -X PUT 'http://127.0.0.1:8080/api/user/update?username=<newuser>&password=<newpass>' -H 'Authorization: Bearer <token>'
 ```
 
 #### /user/url
@@ -109,21 +111,21 @@ $ curl -X PUT 'http://127.0.0.1:8080/api/user/update?username=newuser&password=n
 
 #### Example:
 ```
-curl -X GET 'http://127.0.0.1:8080/api/user/url?id=<urlID>' -H 'Authorization: Bearer <token>'
+$ curl -X GET 'http://127.0.0.1:8080/api/user/url?id=<urlID>' -H 'Authorization: Bearer <token>'
 ```
 
 * `POST` : Add url to monitor
 
 #### Example:
 ```
-curl -X POST 'http://127.0.0.1:8080/api/user/url?url=<url>&threshold=<threshold>' -H 'Authorization: Bearer <token>' 
+$ curl -X POST 'http://127.0.0.1:8080/api/user/url?url=<url>&threshold=<threshold>' -H 'Authorization: Bearer <token>' 
 ```
 
 * `PUT` :  Update url
 
 #### Example:
 ```
-curl -X PUT 'http://127.0.0.1:8080/api/user/url?id=<urlID>&url=<url>&threshold=<threshold>' -H 'Authorization: Bearer <token>'
+$ curl -X PUT 'http://127.0.0.1:8080/api/user/url?id=<urlID>&url=<url>&threshold=<threshold>' -H 'Authorization: Bearer <token>'
 ```
 
 #### /user/url/all
@@ -131,7 +133,7 @@ curl -X PUT 'http://127.0.0.1:8080/api/user/url?id=<urlID>&url=<url>&threshold=<
 
 #### Example:
 ```
-curl -X GET http://127.0.0.1:8080/api/user/url/all -H 'Authorization: Bearer <token>'
+$ curl -X GET http://127.0.0.1:8080/api/user/url/all -H 'Authorization: Bearer <token>'
 ```
 
 #### /user/url/:id
@@ -142,3 +144,10 @@ curl -X GET http://127.0.0.1:8080/api/user/url/all -H 'Authorization: Bearer <to
 $ curl -X GET http://127.0.0.1:8080/api/user/url/<urlID> -H 'Authorization: Bearer <token>'
 ```
 
+### TODO
+
+-[ ] Improve request validation
+-[ ] Improve test coverage
+-[ ] More efficient error handling
+-[ ] Improve worker pool
+-[ ] Solve database concurrency issues 

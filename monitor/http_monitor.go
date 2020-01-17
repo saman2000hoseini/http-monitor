@@ -15,6 +15,12 @@ import (
 var handler *handler2.Handler
 var wg *sync.WaitGroup
 
+func worker(urls <-chan model.URL) {
+	for url := range urls {
+		monitorURL(&url)
+	}
+}
+
 //foreach user dedicate goroutine to monitor added urls
 func StartMonitoring(d time.Duration, db *gorm.DB) {
 	wg = new(sync.WaitGroup)
@@ -22,32 +28,32 @@ func StartMonitoring(d time.Duration, db *gorm.DB) {
 	handler = handler2.NewHandler(db)
 	ticker := time.NewTicker(d)
 	for {
-		var users []model.User
-		db.Find(&users)
-		for _, user := range users {
-			wg.Add(1)
-			go MonitorURLs(&user)
-		}
 		wg.Wait()
+		var urls []model.URL
+		db.Find(&urls)
+		urlsChan := make(chan model.URL, len(urls))
+		go func() {
+			for i := 0; i < 30; i++ {
+				go worker(urlsChan)
+			}
+		}()
+		for _, url := range urls {
+			wg.Add(1)
+			urlsChan <- url
+		}
+		close(urlsChan)
 		<-ticker.C
 	}
 }
 
-func MonitorURLs(u *model.User) {
+func monitorURL(url *model.URL) {
 	defer wg.Done()
-	user, err := handler.UserStore.GetByID(u.ID)
-	if err != nil {
-		return
-	}
-	user.URLs, _ = handler.URLStore.GetByUser(user.ID)
-	for _, url := range user.URLs {
-		if HTTPCall(url.Address)/100 == 2 {
-			handler.URLStore.SuccessCall(&url)
-		} else {
-			err := handler.URLStore.FailedCall(&url)
-			if err != nil {
-				fmt.Println(err)
-			}
+	if HTTPCall(url.Address)/100 == 2 {
+		handler.URLStore.SuccessCall(url)
+	} else {
+		err := handler.URLStore.FailedCall(url)
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
 }

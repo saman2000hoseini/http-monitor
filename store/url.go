@@ -23,18 +23,17 @@ func (us *URLStore) SuccessCall(u *model.URL) error {
 func (us *URLStore) FailedCall(u *model.URL) error {
 	u.FailedCall++
 	var err error
-	u.Alert, err = us.GetAlert(u.ID)
-	if err != nil && !gorm.IsRecordNotFoundError(err) {
-		return err
-	}
-	if gorm.IsRecordNotFoundError(err) {
-		u.Alert = nil
-	}
-	if u.FailedCall >= u.Threshold && u.Alert == nil {
-		u.Alert = model.NewAlert("Critical threshold violated", u.FailedCall, u.ID)
-		us.db.Save(u.Alert)
-	} else if u.Alert != nil {
-		u.Alert.FailedCall = u.FailedCall
+
+	if u.FailedCall >= u.Threshold {
+		u.Alert, err = us.GetAlert(u.ID)
+		if err != nil && !gorm.IsRecordNotFoundError(err) {
+			return err
+		}
+		if gorm.IsRecordNotFoundError(err) {
+			u.Alert = model.NewAlert("Critical threshold violated", u.FailedCall, u.ID)
+		} else {
+			u.Alert.FailedCall = u.FailedCall
+		}
 		us.db.Save(u.Alert)
 	}
 	return us.db.Save(u).Error
