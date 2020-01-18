@@ -8,7 +8,7 @@ import (
 type userRegisterRequest struct {
 	User struct {
 		Username string `json:"username" validate:"required"`
-		Password string `json:"password" validate:"required"`
+		Password string `json:"password" validate:"required,min=8"`
 	} `json:"user"`
 }
 
@@ -29,7 +29,7 @@ func (r *userRegisterRequest) bind(c echo.Context, u *model.User) error {
 type userLoginRequest struct {
 	User struct {
 		Username string `json:"username" validate:"required"`
-		Password string `json:"password" validate:"required"`
+		Password string `json:"password" validate:"required,min=8"`
 	} `json:"user"`
 }
 

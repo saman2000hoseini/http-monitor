@@ -23,7 +23,7 @@ func (us *URLStore) SuccessCall(u *model.URL) error {
 func (us *URLStore) FailedCall(u *model.URL) error {
 	u.FailedCall++
 	var err error
-
+	err = us.db.Save(u).Error
 	if u.FailedCall >= u.Threshold {
 		u.Alert, err = us.GetAlert(u.ID)
 		if err != nil && !gorm.IsRecordNotFoundError(err) {
@@ -34,9 +34,9 @@ func (us *URLStore) FailedCall(u *model.URL) error {
 		} else {
 			u.Alert.FailedCall = u.FailedCall
 		}
-		us.db.Save(u.Alert)
+		return us.db.Save(u.Alert).Error
 	}
-	return us.db.Save(u).Error
+	return err
 }
 
 //thrown alert has been seen so it should reset

@@ -71,7 +71,7 @@ func HTTPCall(a string) int {
 //extract url address into standard format
 func reFormat(a string) string {
 	strings.Replace(a, "", "www.", 1)
-	if !strings.Contains(a, "http://") {
+	if !strings.Contains(a, "http://") && !strings.Contains(a, "https://") {
 		a = "http://" + a
 	}
 	return a
