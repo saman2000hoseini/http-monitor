@@ -3,9 +3,11 @@ package handler
 import (
 	"fmt"
 	"github.com/labstack/echo"
+	"github.com/saman2000hoseini/http-monitor/utils"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
 )
@@ -71,6 +73,23 @@ func TestFailedLogin(t *testing.T) {
 	c := e.NewContext(req, rec)
 	assert.NoError(t, handler.Login(c))
 	if assert.Equal(t, http.StatusForbidden, rec.Code) {
+		fmt.Println(rec.Body.String())
+	}
+}
+
+func TestSuccessfulUpdate(t *testing.T) {
+	tearDown()
+	setup()
+	f := make(url.Values)
+	f.Set("username", "mynewusername")
+	f.Set("password", "password")
+	req := httptest.NewRequest(echo.POST, "/api/user/update", strings.NewReader(f.Encode()))
+	token, _ := utils.GenerateJWT(1)
+	req.Header.Set(echo.HeaderAuthorization, "token: "+token)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	e.NewContext(req, rec)
+	if assert.Equal(t, http.StatusOK, rec.Code) {
 		fmt.Println(rec.Body.String())
 	}
 }
