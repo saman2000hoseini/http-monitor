@@ -2,19 +2,15 @@ package handler
 
 import (
 	"encoding/json"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/saman2000hoseini/http-monitor/model"
-	"github.com/saman2000hoseini/http-monitor/router/middleware"
 	"net/http"
 	"strconv"
 )
 
 func (h *Handler) AddURL(c echo.Context) error {
-	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*middleware.JWTCustomClaims)
-	id := claims.ID
+	id := ReadToken(c)
 	user := &model.User{}
 	user, _ = h.UserStore.GetByID(id)
 	if len(user.URLs) >= model.URLLIMIT {
@@ -33,9 +29,7 @@ func (h *Handler) AddURL(c echo.Context) error {
 }
 
 func (h *Handler) UpdateURL(c echo.Context) error {
-	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*middleware.JWTCustomClaims)
-	id := claims.ID
+	id := ReadToken(c)
 	url := &model.URL{}
 	uid, _ := strconv.ParseUint(c.FormValue("id"), 10, 32)
 	url, err := h.URLStore.GetByID(uint(uid))
@@ -59,9 +53,7 @@ func (h *Handler) UpdateURL(c echo.Context) error {
 }
 
 func (h *Handler) GetURLs(c echo.Context) error {
-	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*middleware.JWTCustomClaims)
-	id := claims.ID
+	id := ReadToken(c)
 	user := &model.User{}
 	user, _ = h.UserStore.GetByID(id)
 	jsonUser, err := json.Marshal(user)
@@ -72,9 +64,7 @@ func (h *Handler) GetURLs(c echo.Context) error {
 }
 
 func (h *Handler) GetURL(c echo.Context) error {
-	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*middleware.JWTCustomClaims)
-	id := claims.ID
+	id := ReadToken(c)
 	uid, _ := strconv.ParseUint(c.FormValue("id"), 10, 32)
 	url, err := h.URLStore.GetByID(uint(uid))
 	if err != nil {
@@ -98,9 +88,7 @@ func (h *Handler) GetURL(c echo.Context) error {
 }
 
 func (h *Handler) GetURLStatistics(c echo.Context) error {
-	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*middleware.JWTCustomClaims)
-	id := claims.ID
+	id := ReadToken(c)
 	uid, _ := strconv.ParseUint(c.Param("id"), 10, 32)
 	url, err := h.URLStore.GetByID(uint(uid))
 	if err != nil {

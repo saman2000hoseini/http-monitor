@@ -3,10 +3,8 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/saman2000hoseini/http-monitor/model"
-	"github.com/saman2000hoseini/http-monitor/router/middleware"
 	"github.com/saman2000hoseini/http-monitor/utils"
 	"net/http"
 )
@@ -56,9 +54,7 @@ func (h *Handler) Login(c echo.Context) error {
 }
 
 func (h *Handler) Update(c echo.Context) error {
-	u := c.Get("user").(*jwt.Token)
-	claims := u.Claims.(*middleware.JWTCustomClaims)
-	id := claims.ID
+	id := ReadToken(c)
 	user := &model.User{}
 	user, _ = h.UserStore.GetByID(id)
 	user.Username = c.FormValue("username")
